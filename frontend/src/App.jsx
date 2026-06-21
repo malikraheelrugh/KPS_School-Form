@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const API_URL = import.meta.env.VITE_API_URL  ||"https://kps-school-form-backend.com/" ;
+const API_URL = "https://kps-school-form-backend.com/" ;
 
 // Field definitions drive both the rendered inputs and the validation,
 // so adding/removing a field only requires editing this one array.
