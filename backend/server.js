@@ -1,13 +1,23 @@
 const express = require("express");
 const cors = require("cors");
-const { createStudent, getAllStudents, deleteStudent } = require("./db");
+const {
+  createStudent,
+  getAllStudents,
+  deleteStudent,
+} = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Allow frontend requests during development.
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "*",
+  })
+);
 app.use(express.json());
 
+// Required fields for the registration form.
 const REQUIRED_FIELDS = [
   "student_name",
   "father_name",
@@ -26,7 +36,10 @@ function validateStudent(data) {
     }
   });
 
-  if (data.phone_number && !/^[0-9+\-\s]{7,15}$/.test(data.phone_number.trim())) {
+  if (
+    data.phone_number &&
+    !/^[0-9+\-\s]{7,15}$/.test(data.phone_number.trim())
+  ) {
     errors.phone_number = "Enter a valid phone number";
   }
 
@@ -42,41 +55,66 @@ app.post("/api/students", (req, res) => {
   }
 
   try {
-    const trimmedData = {
+    const student = createStudent({
       student_name: data.student_name.trim(),
       father_name: data.father_name.trim(),
       registration_number: data.registration_number.trim(),
       class: data.class.trim(),
       phone_number: data.phone_number.trim(),
-    };
+    });
 
-    const newStudent = createStudent(trimmedData);
-    return res.status(201).json({ success: true, student: newStudent });
+    return res.status(201).json({ success: true, student });
   } catch (err) {
-    if (err.message && err.message.includes("UNIQUE")) {
+    if (err.code === "DUPLICATE") {
       return res.status(400).json({
         success: false,
-        errors: { registration_number: "This registration number already exists" },
+        errors: {
+          registration_number: "This registration number already exists",
+        },
       });
     }
+
     console.error(err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
 app.get("/api/students", (req, res) => {
-  const students = getAllStudents();
-  res.json({ success: true, students });
+  try {
+    const students = getAllStudents();
+    return res.json({ success: true, students });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
 });
 
 app.delete("/api/students/:id", (req, res) => {
-  const deleted = deleteStudent(req.params.id);
-  if (!deleted) {
-    return res.status(404).json({ success: false, message: "Student not found" });
+  try {
+    const removed = deleteStudent(req.params.id);
+
+    if (!removed) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    return res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
-  res.json({ success: true });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.get("/", (req, res) => {
+  res.json({ status: "ok", message: "Student registration API is running" });
 });
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

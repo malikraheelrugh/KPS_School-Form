@@ -1,5 +1,14 @@
 [
   {
+    "id": 2,
+    "student_name": "Raheel Abbas",
+    "father_name": "M Abbas",
+    "registration_number": "2123",
+    "class": "10",
+    "phone_number": "034966305842",
+    "created_at": "2026-06-21T00:54:33.152Z"
+  },
+  {
     "id": 1,
     "student_name": "Raheel abbas",
     "father_name": "Muhammad abbas",
