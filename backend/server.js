@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 5000;
 // Allow frontend requests during development.
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "*",
+    origin: process.env.Frontend_Url || "*",
   })
 );
 app.use(express.json());
