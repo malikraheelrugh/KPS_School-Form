@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const API_URL = "https://kps-school-form-4cz3.vercel.app/api/students";
+const API_URL = import.meta.env.VITE_API_URL || "/api/students" || "http://localhost:5000/api/students"|| "https://kps-school-form-backend.onrender.com/api/students";
 
 // Field definitions drive both the rendered inputs and the validation,
 // so adding/removing a field only requires editing this one array.
@@ -137,7 +137,7 @@ export default function App() {
               <input
                 id={name}
                 name={name}
-                type={type}    
+                type={type}
                 value={formData[name]}
                 onChange={handleChange}
                 placeholder={placeholder}
@@ -177,7 +177,6 @@ export default function App() {
             {submitting ? "Submitting..." : "Register Student"}
           </button>
         </form>
-        
       </div>
     </div>
   );
