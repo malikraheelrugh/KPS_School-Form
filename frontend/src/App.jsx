@@ -137,7 +137,7 @@ export default function App() {
               <input
                 id={name}
                 name={name}
-                type={type}
+                type={type}    
                 value={formData[name]}
                 onChange={handleChange}
                 placeholder={placeholder}
@@ -177,6 +177,7 @@ export default function App() {
             {submitting ? "Submitting..." : "Register Student"}
           </button>
         </form>
+        
       </div>
     </div>
   );

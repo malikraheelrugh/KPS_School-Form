@@ -74,8 +74,11 @@ app.post("/api/students", (req, res) => {
       });
     }
 
-    console.error(err);
-    return res.status(500).json({ success: false, message: "Server error" });
+    console.error("Error creating student:", err.message);
+    const message = err.message && (err.message.includes("EACCES") || err.message.includes("read-only"))
+      ? "Database is read-only. Using a persistent database is required for production deployments."
+      : "Server error";
+    return res.status(500).json({ success: false, message });
   }
 });
 

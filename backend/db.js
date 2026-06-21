@@ -18,7 +18,14 @@ function readStudents() {
 }
 
 function writeStudents(students) {
-  fs.writeFileSync(dbPath, JSON.stringify(students, null, 2), "utf8");
+  try {
+    fs.writeFileSync(dbPath, JSON.stringify(students, null, 2), "utf8");
+  } catch (error) {
+    console.error("Failed to write students.json:", error.message);
+    console.error("This may be due to read-only filesystem on serverless (e.g., Vercel).");
+    console.error("For production, use a database (PostgreSQL, MongoDB, etc.).");
+    throw error;
+  }
 }
 
 function getNextId(students) {
